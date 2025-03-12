@@ -1,61 +1,82 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 
+function Login()
+{
+  const app_name = '194.195.211.99';
+  function buildPath(route:string) : string
+  {
+    //if(process.env.NODE_ENV != 'development')
+    //{
+    //  return 'http://' + app_name + ':5000/' + route;
+    //}
+    //else
+    //{
+      return 'http://localhost:5000/' + route;
+    //}
+  }
 
+  const [message, setMessage] = useState('');
+  const [loginUsername, setLoginUsername] = React.useState('');
+  const [loginPassword, setLoginPassword] = React.useState('');
 
-function Login() {
+  async function doLogin(event:any) : Promise<void>
+  {
+    event.preventDefault();
 
-    const [message, setMessage] = useState('');
-    const [loginName, setLoginName] = React.useState('');
-    const [loginPassword, setPassword] = React.useState('');
+    var obj = {login:loginUsername, password:loginPassword};
+    var js = JSON.stringify(obj);
 
-    async function doLogin(event: any): Promise<void> {
-        event.preventDefault();
-        var obj = { login: loginName, password: loginPassword };
-        var js = JSON.stringify(obj);
-        try {
-            const response = await fetch('http://localhost:5000/api/login',
-                {
-                    method: 'POST', body: js, headers: {
-                        'Content-Type':
-                            'application/json'
-                    }
-                });
-            var res = JSON.parse(await response.text());
-            if (res.id <= 0) {
-                setMessage('User/Password combination incorrect');
-            }
-            else {
-                var user =
-                    { firstName: res.firstName, lastName: res.lastName, id: res.id }
-                localStorage.setItem('user_data', JSON.stringify(user));
-                setMessage('');
-                window.location.href = '/cards';
-            }
-        }
-        catch (error: any) {
-            alert(error.toString());
-            return;
-        }
-    };
+    try
+    {
+      const response = await fetch(buildPath('apt/login'),
+        {method:'POST', body:js, headers:{'Content-Type':'application/json'}});
+      
+      var res = JSON.parse(await response.text());
 
-    function handleSetLoginName(e: any): void {
-        setLoginName(e.target.value);
+      if(res.id <= 0)
+      {
+        setMessage('User/Password combination incorrect');
+      }
+      else
+      {
+        var user = {id:res.id, name:res.name, emailAddress:res.emailAddress}
+          localStorage.setItem('user_data', JSON.stringify(user));
+        
+        setMessage('');
+
+        window.location.href ='/'
+      }
     }
-    function handleSetPassword(e: any): void {
-        setPassword(e.target.value);
+    catch(error:any)
+    {
+      alert(error.toString());
+      return;
     }
+  }
 
-    return (
-        <div id="loginDiv">
-            <span id="inner-title">PLEASE LOG IN</span><br />
-            Login: <input type="text" id="loginName" placeholder="Username"
-                onChange={handleSetLoginName} />
-            Password: <input type="password" id="loginPassword" placeholder="Password"
-                onChange={handleSetPassword} />
-            <input type="submit" id="loginButton" className="buttons" value="Do It"
-                onClick={doLogin} />
-            <span id="loginResult">{message}</span>
-        </div>
+  function handleSetLoginName(e:any) : void
+  {
+    setLoginUsername(e.target.value);
+  }
+
+  function handleSetPassword(e:any) : void
+  {
+    setLoginPassword(e.target.value);
+  }
+
+    return(
+      <div id="loginDiv">
+        <span id="inner-title">PLEASE LOG IN</span><br />
+        <span id="loginResult">{message}</span>
+        <input type="text" id="loginName" placeholder="Username" 
+          onChange={handleSetLoginName} /><br />
+        <input type="password" id="loginPassword" placeholder="Password" 
+          onChange={handleSetPassword} /><br />
+        <input type="submit" id="loginButton" className="buttons" value = "Do It"
+          onClick={doLogin} />
+        <span id="loginResult"></span>
+     </div>
     );
 };
+
 export default Login;
