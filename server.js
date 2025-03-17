@@ -113,5 +113,86 @@ app.post('/api/register', async (req, res, next) => {
     res.status(status).json(ret);
 });
 
+app.post('/api/updateUser', async (req, res, next) => {
+    // incoming: id, (one of following [login, password, emailAddress, name])
+    // outgoing: id, login, emailAddress, name, error
+
+    // Default values
+    var error = '';
+    var status = 200;
+    var name = '';
+    var emailAddress = '';
+    var login = '';
+
+    // Uses COP4331 database, creates formatted id from req
+    const db = client.db('COP4331');
+    const id = ObjectId.createFromHexString(req.body.id);
+
+    try {
+        // Finds user through id, returns 404 status if not found
+        var curInfo = await db.collection('Users').findOne({_id:id})
+        if(curInfo)
+        {
+            name = curInfo.name;
+            emailAddress = curInfo.emailAddress;
+            login = curInfo.login;
+
+            // Checks for which key given, updates value on database
+            if(req.body.login)
+            {
+                // Ensures login not duplicated, returns error if so
+                var loginCheck = await db.collection('Users').find({login:req.body.login}).toArray();
+                if(loginCheck.length > 0)
+                {
+                    error = 'Login Already In Use';
+                    status = 400;
+                }
+                else
+                {
+                    db.collection('Users').updateOne({_id:id}, {$set: {login:req.body.login}});
+                    login = req.body.login;
+                }
+            }
+            else if(req.body.emailAddress)
+            {
+                // Ensures emailAddress not duplicated, returns error if so
+                var loginCheck = await db.collection('Users').find({emailAddress:req.body.emailAddress}).toArray();
+                if(loginCheck.length > 0)
+                {
+                    error = 'Email Address Already In Use';
+                    status = 400;
+                }
+                else
+                {
+                    await db.collection('Users').updateOne({_id:id}, {$set: {emailAddress:req.body.emailAddress}});
+                    emailAddress = req.body.emailAddress;
+                }
+            }
+            else if(req.body.password)
+            {
+                await db.collection('Users').updateOne({_id:id}, {$set: {password:req.body.password}});
+            }
+            else if(req.body.name)
+            {
+                await db.collection('Users').updateOne({_id:id}, {$set: {name:req.body.name}});
+                name = req.body.name;
+            }
+        }
+        else 
+        {
+            error = 'Invalid User ID';
+            status = 404;
+        }
+    }
+    catch (err) {
+        error = err;
+        status = 500;
+    }
+
+    // Returns update results
+    var ret = { id: id, login: login, name: name, emailAddress: emailAddress, error: error};
+    res.status(status).json(ret);
+});
+
 // Starts the Express server and listens on port 5000 for incoming request
 app.listen(5000);
