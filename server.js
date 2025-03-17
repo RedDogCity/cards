@@ -3,7 +3,7 @@ const bodyParser = require('body-parser'); // parse incoming JSON request
 const cors = require('cors');
 
 // MonjoDB client to connect and interact with the database
-const MongoClient = require('mongodb').MongoClient;
+const {MongoClient, ObjectId} = require('mongodb');
 const url = 'mongodb+srv://root:WhatAPassword@test.2svvr.mongodb.net/?retryWrites=true&w=majority&appName=Test';
 const client = new MongoClient(url);
 client.connect();
@@ -58,12 +58,12 @@ app.post('/api/login', async (req, res, next) => {
         else
         {
             error = 'Invalid Login/Password';
-            status = 401;
+            status = 400;
         }
     }
     catch (err) {
         error = 'Server Failure';
-        status = 400;
+        status = 500;
     }
 
     // Returns login results
@@ -90,12 +90,12 @@ app.post('/api/register', async (req, res, next) => {
         if(loginCheck.length > 0)
         {
             error = 'Login Already In Use';
-            status = 401;
+            status = 400;
         }
         else if(emailCheck.length > 0)
         {
             error = 'Email Address Already In Use';
-            status = 401;
+            status = 400;
         }
         else 
         {
@@ -105,7 +105,7 @@ app.post('/api/register', async (req, res, next) => {
     // Error caught, bad request
     catch (err) {
         error = 'Server Failure';
-        status = 400;
+        status = 500;
     }
     
     // Returns register results
