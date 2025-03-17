@@ -30,53 +30,88 @@ app.use((req, res, next) => {
 // handles user login, defining a post API route /api/login
 app.post('/api/login', async (req, res, next) => {
 
-    // initialize an empty string for the error message. 
-    // will remain empty if no error occurs
+    // Default return values
     var error = '';
-    // extract login and password info, from req.body
-    // sent by the client, by login
-    const { login, password } = req.body;
-
-    // Access MongoDB database name COP4331, using the connected client object
-    const db = client.db('COP4331');
-
-    // queries the user collection in the database to find document where both login, password match input
-    const results = await db.collection('Users').find({login:login, password:password}).toArray();
-
-    // set the default values for the response in case the login fails
+    var status = 200;
     var id = -1;
     var name = '';
     var email = '';
 
-    // if result has at least one match, it means login was successful
-    if( results.length > 0 )
-    {
-        id = results[0]._id;
-        name = results[0].name;
-        email = results[0].emailAddress;
+    // extract login and password info, from req.body
+    // sent by the client, by login
+    const { login, password } = req.body;
+
+    // Selects the COP4331 database for operation
+    const db = client.db('COP4331');
+
+    try {
+        // queries the user collection in the database to find document where both login, password match input
+        const results = await db.collection('Users').find({login:login, password:password}).toArray();
+
+        // if result has at least one match, it means login was successful
+        if( results.length > 0 )
+        {
+            id = results[0]._id;
+            name = results[0].name;
+            email = results[0].emailAddress;
+        }
+        else
+        {
+            error = 'Invalid Login/Password';
+            status = 401;
+        }
     }
-    // if (results.length === 0) {
-    //     return res.status(401).json({ error: 'Invalid login credentials' });
-    // }
-    // gives re, user ud, name, emailAddress, error
-    // sents a json response back to the client with a 200 (ok) status
+    catch (err) {
+        error = 'Server Failure';
+        status = 400;
+    }
+
+    // Returns login results
     var ret = { id: id, name: name, emailAdress: email, error: error};
-    res.status(200).json(ret);
+    res.status(status).json(ret);
 });
 
 app.post('/api/register', async (req, res, next) => {
     // incoming: login, password, name, emailAddress
     // outgoing: error
 
+    // Default return values, user successfully created
     var error = '';
+    var status = 201;
 
-    // inset the entire body into User collectoin
+    // Selects the COP4331 database for operation
     const db = client.db('COP4331');
-    const results = await db.collection('Users').insertOne(req.body);
 
-    // returns and empty error message.
+    try {
+        // Attempts to insert input user info into Users collection
+
+        var loginCheck = await db.collection('Users').find({login:req.body.login}).toArray();
+        var emailCheck = await db.collection('Users').find({emailAddress:req.body.emailAddress}).toArray();
+        if(loginCheck.length > 0)
+        {
+            error = 'Login Already In Use';
+            status = 401;
+        }
+        else if(emailCheck.length > 0)
+        {
+            error = 'Email Address Already In Use';
+            status = 401;
+        }
+        else 
+        {
+            results = await db.collection('Users').insertOne(req.body);
+        }
+    }
+    // Error caught, bad request
+    catch (err) {
+        error = 'Server Failure';
+        status = 400;
+    }
+    
+    // Returns register results
     var ret = { error: error };
-    res.status(200).json(ret);
+    res.status(status).json(ret);
 });
+
 // Starts the Express server and listens on port 5000 for incoming request
 app.listen(5000);
