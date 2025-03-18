@@ -8,7 +8,7 @@ const url = 'mongodb+srv://root:WhatAPassword@test.2svvr.mongodb.net/?retryWrite
 const client = new MongoClient(url);
 client.connect();
 
-// Initializes the express application
+// Initializes the express application.
 const app = express();
 app.use(cors()); // allow request from any origin
 app.use(bodyParser.json()); //allows the server to accept and parse incoming JSON data
