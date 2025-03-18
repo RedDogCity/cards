@@ -16,7 +16,7 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v2
       with:
-        node-version: 22.14.0
+        node-version: 18
     - name: Install dependencies
       run: npm install
 deploy:
@@ -34,7 +34,7 @@ deploy:
         SSH_USERNAME : ${{secrets.SSH_USERNAME}}
       run: |
         sshpass -p "${SSH_KEY}" ssh -o StrictHostKeyChecking=no ${SSH_USERNAME}@${SSH_HOST} << 'EOF'
-        cd /var/www/Ganttify.xyz/html
+        cd /var/www/html
         git pull origin master
         npm install
         npm run build
@@ -64,7 +64,7 @@ jobs:
           SSH_USERNAME : ${{secrets.SSH_USERNAME}}
         run: |
           sshpass -p "${SSH_KEY}" ssh -o StrictHostKeyChecking=no ${SSH_USERNAME}@${SSH_HOST} << 'EOF'
-          cd Ganttify/Ganttify-Backend-UCF_SD
+          cd /var/animeServer
           git pull origin master
           npm install
           pm2 restart server
