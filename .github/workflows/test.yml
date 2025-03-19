@@ -29,13 +29,14 @@ jobs:
         sshpass -p "${SSH_KEY}" ssh -o StrictHostKeyChecking=no ${SSH_USERNAME}@${SSH_HOST}<<'EOF'
         gh auth login --with-token < git-token.txt
         rm -rf cards
+        rm -rf /var/animeServer/*
+        rm -rf /var/www/html/*
         gh repo clone https://github.com/RedDogCity/cards.git
-        mv cards/backend /var/animeServer
+        mv cards/backend/* /var/animeServer
         cd cards/frontend
         npm install
         npm audit fix
         npm run build
-        rm -rf /var/www/html
         mv dist/* /var/www/html
         systemctl restart nginx
         cd /var/animeServer
