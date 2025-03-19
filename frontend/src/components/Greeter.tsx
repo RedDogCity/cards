@@ -10,7 +10,7 @@ function Greeter()
 
     return(
         <div id='greeter-text'>
-            <h1>Welcome To AniLert, {name}</h1>
+            <h1>Welcome To AniLert: {name}</h1>
         </div>
     );
 };

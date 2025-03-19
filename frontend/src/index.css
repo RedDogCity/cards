@@ -5,12 +5,30 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: #000000;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+/* remember to add logo to app */
+#header {
+  height: 200px;
+  position: relative;
+  padding: 0;
+}
+#header #logo {
+  display: block;
+  height: 200px;
+  margin: 40px 40px 40px 0;
+  float: center;
+}
+.Website_Logo {
+  display: block;
+  height: 50px;
+  margin: 20px 10px 20px 0;
+  float: left;
 }
 
 a {
@@ -56,7 +74,7 @@ button:focus-visible {
 
 @media (prefers-color-scheme: light) {
   :root {
-    color: #213547;
+    color: #0a0a0a;
     background-color: #ffffff;
   }
   a:hover {

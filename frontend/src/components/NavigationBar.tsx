@@ -1,8 +1,12 @@
 import {Link} from "react-router-dom";
 import LogOut from './LogOut.tsx';
 
+import Website_Logo from '../assets/images/Website_Logo.png';
+
 function NavigationBar()
 {
+
+
     var logOut = < ></>
     if(localStorage.getItem('user_data') != null)
     {
@@ -12,7 +16,14 @@ function NavigationBar()
 
     return(
         <div>
+            <div id="header">
+                <a id="logo" href="/" title="AniLert">
+                <img src={Website_Logo} alt="Web Logo" width="400" height="150"/>
+                </a>
+            </div>
+            
             <nav>
+                
                 <Link to="/">Home</Link>
                 &emsp;
                 <Link to="/login">Login</Link>
