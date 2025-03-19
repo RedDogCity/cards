@@ -1,0 +1,55 @@
+name: Auto-Deploy
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on:
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: 22
+    - name: Install dependencies
+      run: npm install
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: Install sshpass
+      run: sudo apt-get install -y sshpass
+    - name: Deploy to Linode Droplet
+      env:
+        SSH_HOST: ${{ secrets.SSH_HOST }}
+        SSH_KEY: ${{ secrets.SSH_KEY }}
+        SSH_USERNAME : ${{secrets.SSH_USERNAME}}
+      run: |
+      	# SSH into remote server
+        sshpass -p "${SSH_KEY}" ssh -o StrictHostKeyChecking=no ${SSH_USERNAME}@${SSH_HOST}<<'EOF'
+        # GitHub login and repo clone
+        gh auth login --with-token < git-token.txt
+        rm -rf cards
+        gh repo clone https://github.com/RedDogCity/cards.git
+        # Builds and deploys front- and backend
+        mv cards/backend /var/animeServer
+        cd cards/frontend
+        npm install
+        npm audit fix
+        npm run build
+        mv dist /var/www/html
+        systemctl restart nginx
+        cd /var/animeServer
+        npm install
+        npm remove nodemon
+        npm install node
+        npm audit fix
+        pm2 restart server
+        EOF
