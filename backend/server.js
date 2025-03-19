@@ -29,6 +29,8 @@ app.use((req, res, next) => {
 
 // handles user login, defining a post API route /api/login
 app.post('/api/login', async (req, res, next) => {
+    // incoming: login, password
+    // outgoing: id, name, emailAddress, error
 
     // Default return values
     var error = '';
@@ -196,7 +198,7 @@ app.post('/api/updateUser', async (req, res, next) => {
 
 app.post('/api/getAnimeInfo', async (req, res, next) => {
     // incoming: animeId
-    // outgoing: data
+    // outgoing: data: {...}, error
 
     // Default values
     var data = {}
@@ -238,6 +240,75 @@ app.post('/api/getAnimeInfo', async (req, res, next) => {
     
     // Returns anime data
     var ret = {data:data, error:error}
+    res.status(status).json(ret);
+});
+
+app.post('/api/searchAnime', async (req, res, next) => {
+    // incoming: searchParams: {...}
+    // outgoing: pagination: {...}, data: [{...}, ...], error
+
+    // Default values
+    var data = {};
+    var pagination = {};
+    var error = '';
+    var status = 200;
+
+    // Base search url
+    var jikan_url = 'https://api.jikan.moe/v4/anime?&sfw=true';
+    const params = req.body.searchParams;
+
+    // Concats params to url, if given
+    if(params)
+    {
+        if(params.q)
+        {
+            jikan_url = jikan_url + '&q=' + params.q;
+        }
+        if(params.type)
+        {
+            jikan_url = jikan_url + '&type=' + params.type;
+        }
+        if(params.minScore)
+        {
+            jikan_url = jikan_url + '&min_score=' + params.minScore;
+        }
+        if(params.maxScore)
+        {
+            jikan_url = jikan_url + '&max_score=' + params.maxScore;
+        }
+        if(params.status)
+        {
+            jikan_url = jikan_url + '&status=' + params.status;
+        }
+        if(params.page)
+        {
+            jikan_url = jikan_url + '&page=' + params.page;
+        }
+    }
+    
+    // HTTP request
+    try {
+        const response = await fetch(jikan_url);
+            
+        if(!response.ok)
+        {
+            status = response.status;
+            error = 'Invalid Query Parameters';
+        }
+        else
+        {
+            var out = await response.json();
+            data = out.data;
+            pagination = out.pagination;
+        }
+    }
+    catch (err) {
+        error = err;
+        status = 500;
+    }
+
+    // Returns search results
+    var ret = {pagination:pagination, data:data, error:error};
     res.status(status).json(ret);
 });
 
