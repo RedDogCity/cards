@@ -194,5 +194,52 @@ app.post('/api/updateUser', async (req, res, next) => {
     res.status(status).json(ret);
 });
 
+app.post('/api/getAnimeInfo', async (req, res, next) => {
+    // incoming: animeId
+    // outgoing: data
+
+    // Default values
+    var data = {}
+    var error = '';
+    var status = 200;
+
+    // Checks that animeId is number above 0, error otherwise
+    if(req.body.animeId && !isNaN(req.body.animeId) && req.body.animeId > 0)
+    {
+        // URL for Jikan API request
+        const jikan_url = 'https://api.jikan.moe/v4/anime/' + req.body.animeId + '/full';
+
+        // HTTP request, output stored in data
+        try {
+            const response = await fetch(jikan_url);
+            
+            if(!response.ok)
+            {
+                status = response.status;
+                error = 'Anime Not Found';
+            }
+            else
+            {
+                var out = await response.json();
+                data = out.data;
+            }
+
+        }
+        catch (err) {
+            status = 500;
+            error = err;
+        }
+    }
+    else
+    {
+        status = 400;
+        error = 'Invalid Anime ID';
+    }
+    
+    // Returns anime data
+    var ret = {data:data, error:error}
+    res.status(status).json(ret);
+});
+
 // Starts the Express server and listens on port 5000 for incoming request
 app.listen(5000);
