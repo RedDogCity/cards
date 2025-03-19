@@ -32,7 +32,7 @@ jobs:
         SSH_KEY: ${{ secrets.SSH_KEY }}
         SSH_USERNAME : ${{secrets.SSH_USERNAME}}
       run: |
-        sshpass -p "${SSH_KEY}" ssh -o StrictHostKeyChecking=no ${SSH_USERNAME}@${SSH_HOST} << 'EOF'
+        sshpass -p "${SSH_KEY}" ssh -o StrictHostKeyChecking=no ${SSH_USERNAME}@${SSH_HOST}<<'EOF'
         cd /var/www/html
         git pull origin main
         npm install
