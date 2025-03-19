@@ -35,12 +35,13 @@ jobs:
         npm install
         npm audit fix
         npm run build
-        mv dist /var/www/html
+        rm -rf /var/www/html
+        mv dist/* /var/www/html
         systemctl restart nginx
         cd /var/animeServer
         npm install
         npm remove nodemon
         npm install node
         npm audit fix
-        pm2 restart server
+        pm2 restart server.js
         EOF
