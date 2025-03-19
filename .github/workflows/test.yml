@@ -32,13 +32,10 @@ jobs:
         SSH_KEY: ${{ secrets.SSH_KEY }}
         SSH_USERNAME : ${{secrets.SSH_USERNAME}}
       run: |
-      	# SSH into remote server
         sshpass -p "${SSH_KEY}" ssh -o StrictHostKeyChecking=no ${SSH_USERNAME}@${SSH_HOST}<<'EOF'
-        # GitHub login and repo clone
         gh auth login --with-token < git-token.txt
         rm -rf cards
         gh repo clone https://github.com/RedDogCity/cards.git
-        # Builds and deploys front- and backend
         mv cards/backend /var/animeServer
         cd cards/frontend
         npm install
