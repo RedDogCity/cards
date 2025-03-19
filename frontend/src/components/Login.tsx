@@ -5,14 +5,14 @@ function Login()
   const app_name = '194.195.211.99';
   function buildPath(route:string) : string
   {
-    //if(process.env.NODE_ENV != 'development')
-    //{
-    //  return 'http://' + app_name + ':5000/' + route;
-    //}
-    //else
-    //{
+    if(import.meta.env.NODE_ENV != 'development')
+    {
+      return 'http://' + app_name + ':5000/' + route;
+    }
+    else
+    {
       return 'http://localhost:5000/' + route;
-    //}
+    }
   }
 
   const [message, setMessage] = useState('');
