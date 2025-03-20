@@ -187,7 +187,7 @@ app.post('/api/updateUser', async (req, res, next) => {
         }
     }
     catch (err) {
-        error = err;
+        error = 'Server Failure';
         status = 500;
     }
 
@@ -229,7 +229,7 @@ app.post('/api/getAnimeInfo', async (req, res, next) => {
         }
         catch (err) {
             status = 500;
-            error = err;
+            error = 'Server Failure';
         }
     }
     else
@@ -303,7 +303,7 @@ app.post('/api/searchAnime', async (req, res, next) => {
         }
     }
     catch (err) {
-        error = err;
+        error = 'Server Failure';
         status = 500;
     }
 
