@@ -40,25 +40,36 @@ app.post('/api/login', async (req, res, next) => {
     var name = '';
     var email = '';
 
-    // extract login and password info, from req.body
-    // sent by the client, by login
+    // Gets input login and password from request
     const { login, password } = req.body;
 
     try {
-        // queries the user collection in the database to find document where both login, password match input
-        const results = await db.collection('Users').find({login:login, password:password}).toArray();
+        // Checks DB for User with matching login and password
+        var results = await db.collection('Users').findOne({login:login, password:password});
 
-        // if result has at least one match, it means login was successful
-        if( results.length > 0 )
+        // If match found
+        if(results)
         {
-            id = results[0]._id;
-            name = results[0].name;
-            email = results[0].emailAddress;
+            id = results._id;
+            name = results.name;
+            email = results.emailAddress;
         }
         else
         {
-            error = 'Invalid Login/Password';
-            status = 400;
+            // Checks DB again, incase login is an email
+            results = await db.collection('Users').findOne({emailAddress:login, password:password});
+            if(results)
+            {
+                id = results._id;
+                name = results.name;
+                emailAddress = login;
+            }
+            // No user with matching credentials
+            else
+            {
+                error = 'Invalid Login/Password';
+                status = 400;
+            }
         }
     }
     catch (err) {
@@ -67,7 +78,7 @@ app.post('/api/login', async (req, res, next) => {
     }
 
     // Returns login results
-    var ret = { id: id, name: name, emailAdress: email, error: error};
+    var ret = {id:id, name:name, emailAdress:emailAddress, error:error};
     res.status(status).json(ret);
 });
 
