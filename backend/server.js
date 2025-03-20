@@ -7,6 +7,7 @@ const {MongoClient, ObjectId} = require('mongodb');
 const url = 'mongodb+srv://root:WhatAPassword@test.2svvr.mongodb.net/?retryWrites=true&w=majority&appName=Test';
 const client = new MongoClient(url);
 client.connect();
+const db = client.db('COP4331');
 
 // Initializes the express application.
 const app = express();
@@ -43,9 +44,6 @@ app.post('/api/login', async (req, res, next) => {
     // sent by the client, by login
     const { login, password } = req.body;
 
-    // Selects the COP4331 database for operation
-    const db = client.db('COP4331');
-
     try {
         // queries the user collection in the database to find document where both login, password match input
         const results = await db.collection('Users').find({login:login, password:password}).toArray();
@@ -81,9 +79,6 @@ app.post('/api/register', async (req, res, next) => {
     var error = '';
     var status = 201;
 
-    // Selects the COP4331 database for operation
-    const db = client.db('COP4331');
-
     try {
         // Attempts to insert input user info into Users collection
 
@@ -101,7 +96,7 @@ app.post('/api/register', async (req, res, next) => {
         }
         else 
         {
-            results = await db.collection('Users').insertOne(req.body);
+            await db.collection('Users').insertOne(req.body);
         }
     }
     // Error caught, bad request
@@ -126,13 +121,12 @@ app.post('/api/updateUser', async (req, res, next) => {
     var emailAddress = '';
     var login = '';
 
-    // Uses COP4331 database, creates formatted id from req
-    const db = client.db('COP4331');
+    // Creates formatted id from req
     const id = ObjectId.createFromHexString(req.body.id);
 
     try {
         // Finds user through id, returns 404 status if not found
-        var curInfo = await db.collection('Users').findOne({_id:id})
+        var curInfo = await db.collection('Users').findOne({_id:id});
         if(curInfo)
         {
             name = curInfo.name;
@@ -182,7 +176,7 @@ app.post('/api/updateUser', async (req, res, next) => {
         }
         else 
         {
-            error = 'Invalid User ID';
+            error = 'User Not Found';
             status = 404;
         }
     }
@@ -309,6 +303,99 @@ app.post('/api/searchAnime', async (req, res, next) => {
 
     // Returns search results
     var ret = {pagination:pagination, data:data, error:error};
+    res.status(status).json(ret);
+});
+
+app.post('/api/addAlert', async (req, res, next) => {
+    // incoming: id, animeId
+    // outgoing: error
+
+    // Default values
+    const {id, animeId} = req.body;
+    var error = '';
+    var status = 200;
+
+    try {
+
+        const _id = ObjectId.createFromHexString(id);
+        // Checks that id corresponds to existing user
+        var curInfo = await db.collection('Users').findOne({_id:_id})
+        if(!curInfo)
+        {
+            res.status(404).json({error:'User Not Found'});
+            return;
+        }
+
+        // Checks that animeId is a number
+        if(isNaN(animeId))
+        {
+            res.status(400).json({error:'Invalid Anime ID'});
+            return;
+        }
+
+        // Checks that animeId corresponds to existing anime
+        const jikan_url = 'https://api.jikan.moe/v4/anime/' + req.body.animeId + '/full';
+        const response = await fetch(jikan_url);
+        if(!response.ok)
+        {
+            res = response;
+            return;
+        }
+
+        // Adds animeId to alerts array if not already present
+        if(!curInfo.alerts)
+        {
+            curInfo['alerts'] = [animeId]
+        }
+        else if(!curInfo['alerts'].includes(animeId))
+        {
+            curInfo['alerts'].push(animeId);
+        }
+
+        // Returns new alerts section to db
+        await db.collection('Users').updateOne({_id:_id}, {$set: {alerts:curInfo.alerts}});
+
+        // Updates alerts section of anime in Anime collection, adds anime if missing
+        var animeDB = await db.collection('Anime').findOne({animeId:animeId})
+        if(!animeDB)
+        {
+            // Creates new JSON for anime
+            const animeInfo = await response.json();
+            const animeObject = {
+                animeId: animeId,
+                name: animeInfo.data.title,
+                airing: animeInfo.data.airing,
+                air_day: animeInfo.data.broadcast.day,
+                air_time: animeInfo.data.broadcast.time,
+                alerts: [id]
+            }
+
+            // Adds anime to Anime collection
+            await db.collection('Anime').insertOne(animeObject);
+        }
+        else
+        {
+            // Adds userId to alerts
+            if(!animeDB.alerts)
+            {
+                animeDB['alerts'] = [id];
+            }
+            else if(!animeDB['alerts'].includes(id))
+            {
+                animeDB['alerts'].push(id);
+            }
+
+            // Updates alerts section to db
+            await db.collection('Anime').updateOne({animeId:animeId}, {$set: {alerts:animeDB.alerts}});
+        }
+    }
+    catch (err) {
+        error = 'Server Failure';
+        status = 500;
+    }
+
+    // Returns results
+    var ret = {error:error};
     res.status(status).json(ret);
 });
 
