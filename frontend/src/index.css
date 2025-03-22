@@ -31,6 +31,25 @@
   float: left;
 }
 
+/* For input Boxes */
+.input-box{
+  position: relative;
+  margin: 15px 0;
+  display: flex;
+}
+
+.input-box input{
+  width: 100%;
+  padding: 10px;
+  border: #252525;
+  border-radius: 5px;
+  outline: none;
+  font-size: 16px;
+  color: #eee;
+  font-weight: 500;
+}
+
+
 a {
   font-weight: 500;
   color: #646cff;
