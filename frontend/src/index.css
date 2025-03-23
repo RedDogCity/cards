@@ -4,13 +4,15 @@
   font-weight: 400;
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #000000;
+  color: rgba(0, 0, 0, 0.856);
+  background-color: #ffffff;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  
 }
 /* remember to add logo to app */
 #header {
@@ -31,12 +33,29 @@
   float: left;
 }
 
+body {
+  display: flex;
+  justify-content: center; /* center the content */
+  align-items: center; /* center the content */
+  min-height: 100vh;
+  background: 
+    url('assets/images/background.jpg') no-repeat center center fixed; 
+  background-size: cover;
+  
+}
+
+
+
 /* For input Boxes */
 .input-box{
   position: relative;
   margin: 15px 0;
   display: flex;
+  color: #000000;
 }
+
+
+
 
 .input-box input{
   width: 100%;
@@ -45,8 +64,12 @@
   border-radius: 8px;
   outline: none;
   font-size: 16px;
-  color: #eee;
+  color: #ffffff;
   font-weight: 500;
+  
+  border: 2px solid rgba(255, 146, 146, 0.61);
+  backdrop-filter: blur(5px);
+  background-color: #df161667; /* Background color */
 }
 
 .input-box i{
@@ -55,17 +78,17 @@
   right: 20px;
   transform: translateY(-50%);
   font-size: 20px;
-  color: #888;
+  color: #ffffff;
 }
 
 
 a {
-  font-weight: 500;
-  color: #64ffdd;
+  font-weight: 1000;
+  color: #267a68;
   text-decoration: inherit;
 }
 a:hover {
-  color: #3d917e;
+  color: #0a5543;
 }
 
 body {

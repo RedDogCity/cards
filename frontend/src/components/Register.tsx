@@ -64,35 +64,38 @@ function Register() {
     }
 
     return (
-        <div id="registerDiv">
-            <span id="inner-title">PLEASE REGISTER</span><br />
-            <span id="registerResult">{message}</span><br />
-            <div className="input-box">
-                <input type="text" id="registerName" placeholder="Name"
-                    onChange={handleSetRegisterName} /><br />
+        
+            <div id="registerDiv">
+                <span id="inner-title">PLEASE REGISTER</span><br />
+                <span id="registerResult">{message}</span><br />
+                <div className="input-box">
+                    <input type="text" id="registerName" placeholder="Name"
+                        onChange={handleSetRegisterName} /><br />
                     <i className='bx bxs-spreadsheet'></i>
-            </div>
-            <div className="input-box">
-                <input type="text" id="registerEmail" placeholder="Email Address"
-                    onChange={handleSetRegisterEmailAddress} /><br />
+                </div>
+                <div className="input-box">
+                    <input type="text" id="registerEmail" placeholder="Email Address"
+                        onChange={handleSetRegisterEmailAddress} /><br />
                     <i className='bx bxs-envelope'></i>
-            </div>
-            <div className="input-box">
-                <input type="text" id="registerLogin" placeholder="Login"
-                    onChange={handleSetRegisterUsername} /><br />
+                </div>
+                <div className="input-box">
+                    <input type="text" id="registerLogin" placeholder="Login"
+                        onChange={handleSetRegisterUsername} /><br />
                     <i className='bx bxs-log-in-circle' ></i>
-            </div>
-            <div className="input-box">
-                <input type="text" id="registerPassword" placeholder="Password"
-                    onChange={handleSetRegisterPassword} /><br />
+                </div>
+                <div className="input-box">
+                    <input type="text" id="registerPassword" placeholder="Password"
+                        onChange={handleSetRegisterPassword} /><br />
                     <i className='bx bxs-lock-alt' ></i>
-            </div>
-            <div className="input-box">
-                <input type="submit" id="registerButton" className="buttons" value="Register"
-                    onClick={doRegister} />
-            </div>
+                </div>
+                <div className="input-box">
+                    <input type="submit" id="registerButton" className="buttons" value="Register"
+                        onClick={doRegister} />
+                </div>
 
-        </div>
+            </div>
+        
+
     );
 };
 

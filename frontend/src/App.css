@@ -3,6 +3,12 @@
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(5px);
+  color: #f24d4d;
+  border-radius: 10px;
+  padding: 30px 40px;
 }
 
 .logo {

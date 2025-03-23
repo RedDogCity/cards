@@ -56,27 +56,28 @@ function Login() {
 
 
   return (
-
-    <div id="loginDiv">
-
-      <span id="inner-title">PLEASE LOG IN</span><br />
-      <span id="loginResult">{message}</span><br />
-      <div className="input-box">
-        <input type="text" id="loginName" placeholder="Username"
-          onChange={handleSetLoginName} /><br />
+    
+      <div id="loginDiv">
+        <span id="inner-title">PLEASE LOG IN</span><br />
+        <span id="loginResult">{message}</span><br />
+        <div className="input-box">
+          <input type="text" id="loginName" placeholder="Username"
+            onChange={handleSetLoginName} /><br />
           <i className='bx bxs-log-in-circle' ></i>
-      </div>
-      <div className="input-box">
-        <input type="password" id="loginPassword" placeholder="Password"
-          onChange={handleSetPassword} /><br />
+        </div>
+        <div className="input-box">
+          <input type="password" id="loginPassword" placeholder="Password"
+            onChange={handleSetPassword} /><br />
           <i className='bx bxs-lock-alt' ></i>
-      </div>
-      <div className="input-box">
-        <input type="submit" id="loginButton" className="buttons" value="Do It"
-          onClick={doLogin} />
-      </div>
+        </div>
+        <div className="input-box">
+          <input type="submit" id="loginButton" className="buttons" value="Do It"
+            onClick={doLogin} />
+        </div>
 
-    </div>
+      </div>
+    
+
   );
 };
 
