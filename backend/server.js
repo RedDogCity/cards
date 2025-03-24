@@ -78,7 +78,7 @@ app.post('/api/login', async (req, res, next) => {
     }
 
     // Returns login results
-    var ret = {id:id, name:name, emailAdress:emailAddress, error:error};
+    var ret = {id:id, name:name, emailAddress:emailAddress, error:error};
     res.status(status).json(ret);
 });
 
