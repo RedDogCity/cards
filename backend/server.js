@@ -45,14 +45,14 @@ app.post('/api/login', async (req, res, next) => {
 
     try {
         // Checks DB for User with matching login and password
-        var results = await db.collection('Users').findOne({login:login, password:password});
+        var results = await db.collection('Users').find({login:login, password:password}).toArray();
 
         // If match found
-        if(results)
+        if(results.length > 0)
         {
-            id = results._id;
-            name = results.name;
-            email = results.emailAddress;
+            id = results[0]._id;
+            name = results[0].name;
+            email = results[0].emailAddress;
         }
         else
         {
@@ -78,7 +78,7 @@ app.post('/api/login', async (req, res, next) => {
     }
 
     // Returns login results
-    var ret = {id:id, name:name, emailAdress:emailAddress, error:error};
+    var ret = {id:id, name:name, emailAddress:emailAddress, error:error};
     res.status(status).json(ret);
 });
 
