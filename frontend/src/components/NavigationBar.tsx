@@ -10,32 +10,33 @@ function NavigationBar() {
     var logOut = < ></>
     if (localStorage.getItem('user_data') != null) {
         logOut = <input type='submit' id='logOutButton' className='buttons'
-            onClick={LogOut} value='Log Out' />
+            onClick={LogOut} value='Log Out' /> // what i need to fix
     }
 
     return (
-        
-            <div>
-                <div id="header">
-                    <a id="logo" href="/" title="AniLert">
-                        <img src={Website_Logo} alt="Web Logo" width="400" height="150" />
-                    </a>
 
-
+        <div>
+            <div id="header">
+                <div id="logo">
+                    <img src={Website_Logo} alt="Web Logo" width="400" height="150" />
                 </div>
 
-                <nav>
 
-                    <Link to="/">Home</Link>
-                    &emsp;
-                    <Link to="/login">Login</Link>
-                    &emsp;
-                    <Link to="/register">Register</Link>
-                    &emsp;
-                    {logOut}
-                </nav>
             </div>
-       
+
+            <nav>
+
+                <Link to="/">Home</Link>
+                &emsp;
+                <Link to="/login">Login</Link>
+                &emsp;
+                <Link to="/register">Register</Link>
+                &emsp;
+                {logOut}
+                
+            </nav>
+        </div>
+
 
     );
 };

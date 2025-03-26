@@ -11,9 +11,9 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
   
 }
+
 /* remember to add logo to app */
 #header {
   height: 200px;
@@ -23,7 +23,7 @@
 #header #logo {
   display: block;
   height: 200px;
-  margin: 40px 40px 40px 0;
+  margin: 40px 40px 40px 40px;
   float: center;
 }
 .Website_Logo {
@@ -41,10 +41,7 @@ body {
   background: 
     url('assets/images/background.jpg') no-repeat center center fixed; 
   background-size: cover;
-  
 }
-
-
 
 /* For input Boxes */
 .input-box{
@@ -72,6 +69,10 @@ body {
   background-color: #df161667; /* Background color */
 }
 
+.input-box input:hover {
+  background-color: rgba(180, 45, 45, 0.404); /* Background color */
+}
+
 .input-box i{
   position: absolute;
   top: 50%;
@@ -81,15 +82,24 @@ body {
   color: #ffffff;
 }
 
+nav {
+  font-size: 17px; /* or try 20px for a bigger jump */
+  font-weight: bold; /* optional, for stronger text */
+  text-decoration: none; /* removes underline */
+  margin: 0 10px; /* spacing between links */
+  color: #fff; /* or whatever fits your theme */
+}
 
 a {
   font-weight: 1000;
-  color: #267a68;
+  color: #267a73;
   text-decoration: inherit;
+
 }
 a:hover {
-  color: #0a5543;
+  color: #0a554f;
 }
+
 
 body {
   margin: 0;
@@ -99,22 +109,28 @@ body {
   min-height: 100vh;
 }
 
-h1 {
+h1 { /*Header 1*/
   font-size: 3.2em;
-  line-height: 1.1;
+  font-family: 'Anton', sans-serif;
+  line-height: 2.1;
 }
 
-button {
-  border-radius: 8px;
+.buttons {
+  border-radius: 100px;
   border: 1px solid transparent;
-  padding: 0.6em 1.2em;
+  padding: 0.4em 0.9em;
   font-size: 1em;
-  font-weight: 500;
+  font-weight: 1000;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: #ff0000;
   cursor: pointer;
   transition: border-color 0.25s;
 }
+
+
+
+
+
 button:hover {
   border-color: #646cff;
 }
