@@ -1,12 +1,12 @@
 const express = require('express'); // web framework for Node.js to build APIs and server-side applications
 const bodyParser = require('body-parser'); // parse incoming JSON request
-const cors = require('cors');
+const cors = require('cors'); // middleware to enable CORS with various options
 
 // MonjoDB client to connect and interact with the database
 const {MongoClient, ObjectId} = require('mongodb');
 const url = 'mongodb+srv://root:WhatAPassword@test.2svvr.mongodb.net/?retryWrites=true&w=majority&appName=Test';
 const client = new MongoClient(url);
-client.connect();
+client.connect(); // establishes a connection
 const db = client.db('COP4331');
 
 // Initializes the express application.
