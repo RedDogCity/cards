@@ -18,30 +18,38 @@ function Login() {
   async function doLogin(event: any): Promise<void> {
     event.preventDefault();
 
+    if (!loginUsername || !loginPassword) {
+      setMessage('Please enter both username and password.');
+      return;
+    }
+
     var obj = { login: loginUsername, password: loginPassword };
     var js = JSON.stringify(obj);
 
     try {
-      const response = await fetch(buildPath('api/login'),
-        { method: 'POST', body: js, headers: { 'Content-Type': 'application/json' } });
-
-      var res = JSON.parse(await response.text());
-
-      if (res.id <= 0) {
-        setMessage('User/Password combination incorrect');
+      const response = await fetch(buildPath('api/login'), {
+        method: 'POST',
+        body: js,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    
+      if (!response.ok) {
+        setMessage('Login failed. Please try again.');
+        return;
       }
-      else {
-        var user = { id: res.id, name: res.name, emailAddress: res.emailAddress }
+    
+      const res = JSON.parse(await response.text());
+    
+      if (res.error || res.id <= 0) {
+        setMessage(res.error || 'User/Password combination incorrect');
+      } else {
+        const user = { id: res.id, name: res.name, emailAddress: res.emailAddress };
         localStorage.setItem('user_data', JSON.stringify(user));
-
         setMessage('');
-
         window.location.href = '/';
       }
-    }
-    catch (error: any) {
-      alert(error.toString());
-      return;
+    } catch (error:any) {
+      alert('An error occurred: ' + error.toString());
     }
   }
 
