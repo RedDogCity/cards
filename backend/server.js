@@ -45,6 +45,7 @@ app.post('/api/login', async (req, res, next) => {
 
     try {
         // Checks DB for User with matching login and password
+        // returns an array
         var results = await db.collection('Users').find({login:login, password:password}).toArray();
 
         // If match found
@@ -57,12 +58,13 @@ app.post('/api/login', async (req, res, next) => {
         else
         {
             // Checks DB again, incase login is an email
+            // Now result is an object, and not an array.
             results = await db.collection('Users').findOne({emailAddress:login, password:password});
             if(results)
             {
                 id = results._id;
                 name = results.name;
-                emailAddress = login;
+                email = results.emailAddress; // problem line
             }
             // No user with matching credentials
             else
@@ -133,7 +135,7 @@ app.post('/api/updateUser', async (req, res, next) => {
     var login = '';
 
     // Creates formatted id from req
-    const id = ObjectId.createFromHexString(req.body.id);
+    const id = ObjectId.createFromHexString(req.body.id); 
 
     try {
         // Finds user through id, returns 404 status if not found
