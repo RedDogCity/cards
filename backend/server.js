@@ -92,6 +92,14 @@ app.post('/api/register', async (req, res, next) => {
     var error = '';
     var status = 201;
 
+    const user = {
+        login: req.body.login,
+        password: req.body.password,
+        emailAddress: req.body.emailAddress,
+        name: req.body.name,
+        alerts: []
+    }
+
     try {
         // Attempts to insert input user info into Users collection
 
@@ -109,7 +117,7 @@ app.post('/api/register', async (req, res, next) => {
         }
         else 
         {
-            await db.collection('Users').insertOne(req.body);
+            await db.collection('Users').insertOne(JSON.stringify(user));
         }
     }
     // Error caught, bad request
@@ -250,12 +258,13 @@ app.post('/api/getAnimeInfo', async (req, res, next) => {
     res.status(status).json(ret);
 });
 
+// Searches for anime by name and filters
 app.post('/api/searchAnime', async (req, res, next) => {
     // incoming: searchParams: {...}
     // outgoing: pagination: {...}, data: [{...}, ...], error
 
     // Default values
-    var data = {};
+    var animeData = [];
     var pagination = {};
     var error = '';
     var status = 200;
@@ -267,26 +276,32 @@ app.post('/api/searchAnime', async (req, res, next) => {
     // Concats params to url, if given
     if(params)
     {
+        // Query: search term
         if(params.q)
         {
             jikan_url = jikan_url + '&q=' + params.q;
         }
+        // Media type:TV, Movie, etc.
         if(params.type)
         {
             jikan_url = jikan_url + '&type=' + params.type;
         }
+        // Minimum score: lowest searched for score on MAL
         if(params.minScore)
         {
             jikan_url = jikan_url + '&min_score=' + params.minScore;
         }
+        // Maximum score: highest searched for score on MAL
         if(params.maxScore)
         {
             jikan_url = jikan_url + '&max_score=' + params.maxScore;
         }
+        // Airing status: currently being broadcasted
         if(params.status)
         {
             jikan_url = jikan_url + '&status=' + params.status;
         }
+        // Page: Page number if search results > 25 anime
         if(params.page)
         {
             jikan_url = jikan_url + '&page=' + params.page;
@@ -305,7 +320,16 @@ app.post('/api/searchAnime', async (req, res, next) => {
         else
         {
             var out = await response.json();
-            data = out.data;
+            out.data.forEach(anime => {
+                animeData.push({
+                    animeId: anime.mal_id,
+                    title: anime.title,
+                    airing: anime.airing,
+                    air_day: anime.broadcast.day,
+                    synopsis: anime.synopsis,
+                    imageURL: anime.images.jpg.image_url
+                });
+            });
             pagination = out.pagination;
         }
     }
@@ -315,10 +339,11 @@ app.post('/api/searchAnime', async (req, res, next) => {
     }
 
     // Returns search results
-    var ret = {pagination:pagination, data:data, error:error};
+    var ret = {pagination:pagination, data:animeData, error:error};
     res.status(status).json(ret);
 });
 
+// Adds anime alert for user
 app.post('/api/addAlert', async (req, res, next) => {
     // incoming: id, animeId
     // outgoing: error
@@ -376,10 +401,11 @@ app.post('/api/addAlert', async (req, res, next) => {
             const animeInfo = await response.json();
             const animeObject = {
                 animeId: animeId,
-                name: animeInfo.data.title,
+                title: animeInfo.data.title,
                 airing: animeInfo.data.airing,
                 air_day: animeInfo.data.broadcast.day,
-                air_time: animeInfo.data.broadcast.time,
+                synopsis: animeInfo.data.synopsis,
+                imageURL: animeInfo.data.images.jpg.image_url,
                 alerts: [id]
             }
 
@@ -410,6 +436,39 @@ app.post('/api/addAlert', async (req, res, next) => {
     // Returns results
     var ret = {error:error};
     res.status(status).json(ret);
+});
+
+// Fetches all anime currently on user's alerts list
+app.post('/api/getAnimeAlerts', async (req, res, next) => {
+    // incoming: id
+    // outgoing: anime: [{animeId, title, imageURL, synopsis, etc.}, ...], error
+
+    const id = req.body.id;
+    var error = '';
+    var status = 200;
+
+    try {
+        // Checks that id is from valid user
+        const _id = ObjectId.createFromHexString(id);
+        var user = await db.collection('Users').findOne({_id:_id})
+        if(!user)
+        {
+            res.status(404).json({error:'User Not Found'});
+            return;
+        }
+
+        // Gets all anime from alerts list, error if any missing
+        var anime = await db.collection('Anime').find({alerts: id}).toArray()
+        if(anime.length != user.alerts.length){
+            return res.status(404).json({error: 'Alert not found in DB'})
+        }
+    }
+    catch(err) {
+        error = 'Server Failure';
+        status = 500;
+    }
+
+    res.status(status).json({anime: anime, error: error});
 });
 
 // Starts the Express server and listens on port 5000 for incoming request
