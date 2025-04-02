@@ -117,7 +117,7 @@ app.post('/api/register', async (req, res, next) => {
         }
         else 
         {
-            await db.collection('Users').insertOne(JSON.stringify(user));
+            await db.collection('Users').insertOne(user);
         }
     }
     // Error caught, bad request
