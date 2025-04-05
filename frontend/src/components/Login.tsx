@@ -41,7 +41,7 @@ function Login() {
       const res = JSON.parse(await response.text());
     
       if (res.error || res.id <= 0) {
-        setMessage(res.error || 'User/Password combination incorrect');
+        setMessage(res.error || 'User/Password combination incorrect or email not verified.');
       } else {
         const user = { id: res.id, name: res.name, emailAddress: res.emailAddress };
         localStorage.setItem('user_data', JSON.stringify(user));

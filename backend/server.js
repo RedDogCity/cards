@@ -1,6 +1,7 @@
 const express = require('express'); // web framework for Node.js to build APIs and server-side applications
 const bodyParser = require('body-parser'); // parse incoming JSON request
 const cors = require('cors'); // middleware to enable CORS with various options
+const nodemailer = require('nodemailer');
 
 // MonjoDB client to connect and interact with the database
 const {MongoClient, ObjectId} = require('mongodb');
@@ -28,6 +29,72 @@ app.use((req, res, next) => {
 }
 );
 
+// Configuring nodemailer
+const transporter = nodemailer.createTransport({
+    host: 'smtp.zoho.com',
+    port: 465,
+    secure: true,
+    auth: {
+        user: 'cop4331c@zohomail.com', // Replace with your email
+        pass: 'J86xxq9q0gsx'  // Replace with your email password or app-specific password
+    }
+});
+
+// Endpoint to send verification code
+app.post('/api/sendVerificationCode', async (req, res) => {
+    const { email } = req.body;
+    const code = Math.floor(100000 + Math.random() * 900000); // Generate 6-digit code
+    const expiration = Date.now() + 15 * 60 * 1000; // Code expires in 15 minutes
+
+    try {
+        // Store the code and expiration in the database
+        await db.collection('EmailVerification').updateOne(
+            { email },
+            { $set: { code, expiration } },
+            { upsert: true }
+        );
+
+        // Send the email
+        const mailOptions = {
+            from: 'cop4331c@zohomail.com',
+            to: email,
+            subject: 'Your Verification Code',
+            text: `Your verification code is: ${code}`
+        };
+        await transporter.sendMail(mailOptions);
+
+        res.status(200).json({ message: 'Verification code sent successfully.' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to send verification code.' + err });
+    }
+});
+
+// Endpoint to verify the code
+app.post('/api/verifyCode', async (req, res) => {
+    const { email, code } = req.body;
+
+    try {
+        const record = await db.collection('EmailVerification').findOne({ email });
+
+        if (record) {
+            if (record.code === parseInt(code) && record.expiration > Date.now()) {
+                // Code is valid
+                await db.collection('Users').updateOne({ email }, {$set: { isEmailverified:true }});
+                await db.collection('EmailVerification').deleteOne({ email }); // Remove the record after verification
+                res.status(200).json({ message: 'Email verified successfully.' });
+            } else {
+                res.status(400).json({ error: 'Invalid or expired code.' });
+            }
+        } else {
+            res.status(404).json({ error: 'No verification code found for this email.' });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to verify code.' });
+    }
+});
+
 // handles user login, defining a post API route /api/login
 app.post('/api/login', async (req, res, next) => {
     // incoming: login, password
@@ -46,7 +113,7 @@ app.post('/api/login', async (req, res, next) => {
     try {
         // Checks DB for User with matching login and password
         // returns an array
-        var results = await db.collection('Users').find({login:login, password:password}).toArray();
+        var results = await db.collection('Users').find({login:login, password:password, isEmailverified:true}).toArray();
 
         // If match found
         if(results.length > 0)
