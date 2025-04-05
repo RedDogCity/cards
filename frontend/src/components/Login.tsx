@@ -69,7 +69,7 @@ function Login() {
         <span id="inner-title">PLEASE LOG IN</span><br />
         <span id="loginResult">{message}</span><br />
         <div className="input-box">
-          <input type="text" id="loginName" placeholder="Username"
+          <input type="text" id="loginName" placeholder="Email"
             onChange={handleSetLoginName} /><br />
           <i className='bx bxs-log-in-circle' ></i>
         </div>
