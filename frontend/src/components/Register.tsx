@@ -77,6 +77,12 @@ function Register() {
             return;
         }
 
+        const passwordError = validatePassword(registerPassword);
+        if (passwordError) {
+            setMessage(passwordError);
+            return;
+        }
+
         const obj = {
             login: registerUsername,
             password: registerPassword,
@@ -104,6 +110,20 @@ function Register() {
         }
     }
 
+    //Password Verification
+    function validatePassword(password: string): string | null {
+        const minLength = 8;
+        const hasNumberOrSpecialChar = /[0-9!@#$%^&*]/;
+    
+        if (password.length < minLength) {
+            return `Password must be at least ${minLength} characters long.`;
+        }
+        if (!hasNumberOrSpecialChar.test(password)) {
+            return 'Password must contain at least one number or special character.';
+        }
+        return null; // Valid password
+    }
+
     return (
         <div id="registerDiv">
             <span id="inner-title">PLEASE REGISTER</span><br />
@@ -125,7 +145,15 @@ function Register() {
                 <input type="text" id="registerLogin" placeholder="Login" onChange={e => setRegisterUsername(e.target.value)} /><br />
             </div>
             <div className="input-box">
-                <input type="text" id="registerPassword" placeholder="Password" onChange={e => setRegisterPassword(e.target.value)} /><br />
+                <input 
+                    type="text" 
+                    id="registerPassword" 
+                    placeholder="Password" 
+                    onChange={e => {
+                        setRegisterPassword(e.target.value);
+                        const error = validatePassword(e.target.value);
+                        setMessage(error || '');
+                    }} /><br />
             </div>
             <div className="input-box">
                 <input type="submit" id="registerButton" className="buttons" value="Register" onClick={doRegister} />

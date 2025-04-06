@@ -155,46 +155,54 @@ app.post('/api/register', async (req, res, next) => {
     // incoming: login, password, name, emailAddress
     // outgoing: error
 
-    // Default return values, user successfully created
-    var error = '';
-    var status = 201;
+    // Default return values
+    let error = '';
+    let status = 201;
 
+    // Construct user object
     const user = {
         login: req.body.login,
         password: req.body.password,
         emailAddress: req.body.emailAddress,
         name: req.body.name,
         alerts: []
-    }
+    };
+
+    // Password complexity validation
+    const minLength = 8;
+    const hasNumberOrSpecialChar = /[0-9!@#$%^&*]/;
 
     try {
-        // Attempts to insert input user info into Users collection
+        if (user.password.length < minLength) {
+            error = 'Password must be at least 8 characters long.';
+            status = 400;
+        } else if (!hasNumberOrSpecialChar.test(user.password)) {
+            error = 'Password must have at least one number or special character.';
+            status = 400;
+        } else {
+            // Check if login or email already exists in the database
+            const loginCheck = await db.collection('Users').find({ login: req.body.login }).toArray();
+            const emailCheck = await db.collection('Users').find({ emailAddress: req.body.emailAddress }).toArray();
 
-        var loginCheck = await db.collection('Users').find({login:req.body.login}).toArray();
-        var emailCheck = await db.collection('Users').find({emailAddress:req.body.emailAddress}).toArray();
-        if(loginCheck.length > 0)
-        {
-            error = 'Login Already In Use';
-            status = 400;
+            if (loginCheck.length > 0) {
+                error = 'Login Already In Use';
+                status = 400;
+            } else if (emailCheck.length > 0) {
+                error = 'Email Address Already In Use';
+                status = 400;
+            } else {
+                // Insert user into the database
+                await db.collection('Users').insertOne(user);
+            }
         }
-        else if(emailCheck.length > 0)
-        {
-            error = 'Email Address Already In Use';
-            status = 400;
-        }
-        else 
-        {
-            await db.collection('Users').insertOne(user);
-        }
-    }
-    // Error caught, bad request
-    catch (err) {
+    } catch (err) {
+        // Handle server errors
         error = 'Server Failure';
         status = 500;
     }
-    
-    // Returns register results
-    var ret = { error: error };
+
+    // Return response
+    const ret = { error: error };
     res.status(status).json(ret);
 });
 
