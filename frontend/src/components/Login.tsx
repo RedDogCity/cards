@@ -46,7 +46,7 @@ function Login() {
         const user = { id: res.id, name: res.name, emailAddress: res.emailAddress };
         localStorage.setItem('user_data', JSON.stringify(user));
         setMessage('');
-        window.location.href = '/';
+        window.location.href = '/user-home'; // Redirect to user home page after successful login
       }
     } catch (error:any) {
       alert('An error occurred: ' + error.toString());
@@ -63,28 +63,34 @@ function Login() {
 
 
 
-  return (
-    
-      <div id="loginDiv">
-        <span id="inner-title">PLEASE LOG IN</span><br />
-        <span id="loginResult">{message}</span><br />
-        <div className="input-box">
-          <input type="text" id="loginName" placeholder="Email"
-            onChange={handleSetLoginName} /><br />
-          <i className='bx bxs-log-in-circle' ></i>
-        </div>
-        <div className="input-box">
-          <input type="password" id="loginPassword" placeholder="Password"
-            onChange={handleSetPassword} /><br />
-          <i className='bx bxs-lock-alt' ></i>
-        </div>
-        <div className="input-box">
-          <input type="submit" id="loginButton" className="buttons" value="Do It"
-            onClick={doLogin} />
-        </div>
 
+  return (
+
+    <div id="loginDiv">
+      <span id="inner-title" className="text-[1.2em] font-['Space Grotesk'] leading-[2.1]" >PLEASE LOG IN</span><br />
+      <span id="loginResult">{message}</span><br />
+      <div className="input-box">
+        <input type="text" id="loginName" placeholder="Username"
+          onChange={handleSetLoginName} /><br />
+        <i className='bx bxs-log-in-circle' ></i>
       </div>
-    
+      <div className="input-box">
+        <input type="password" id="loginPassword" placeholder="Password"
+          onChange={handleSetPassword} /><br />
+        <i className='bx bxs-lock-alt' ></i>
+      </div>
+      <div className="input-box">
+        <input type="submit" id="loginButton"
+          className="rounded-full border border-transparent px-[0.9em] py-[0.4em] 
+       text-[1em] font-black bg-red-600 cursor-pointer 
+       transition-colors duration-200 hover:border-[#646cff] focus:outline focus:outline-4 
+       focus:outline-blue-400"
+          value="Do It"
+          onClick={doLogin} />
+      </div>
+
+    </div>
+
 
   );
 };

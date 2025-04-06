@@ -9,7 +9,7 @@ function Greeter() {
     return (
         
             <div id='greeter-text'>
-                <h1>Welcome To AniLert!: {name}</h1>
+                <h1 className = "text-[3.2em] font-['Space Grotesk'] leading-[2.1]"> Welcome To AniLert!: {name}</h1>
             </div>
         
 
