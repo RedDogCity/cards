@@ -1,3 +1,5 @@
+import React from 'react';
+
 function Greeter() {
     let name = 'Guest';
     if (localStorage.getItem('user_data') != null) {
