@@ -485,7 +485,7 @@ app.post('/api/addAlert', async (req, res, next) => {
         const response = await fetch(jikan_url);
         if(!response.ok)
         {
-            res = response;
+            res.status(404).json({error:'Anime not found'});
             return;
         }
 
@@ -545,6 +545,73 @@ app.post('/api/addAlert', async (req, res, next) => {
     // Returns results
     var ret = {error:error};
     res.status(status).json(ret);
+});
+
+app.post('/api/removeAlert', async (req, res, next) => {
+    // incoming: id, animeId
+    // outgoing: error
+
+    // Default values
+    const {id, animeId} = req.body;
+    var error = '';
+    var status = 200;
+
+    try {
+        const _id = ObjectId.createFromHexString(id);
+        // Checks that id corresponds to existing user
+        var curInfo = await db.collection('Users').findOne({_id:_id})
+        if(!curInfo)
+        {
+            res.status(404).json({error:'User Not Found'});
+            return;
+        }
+
+        // Checks that animeId is a number
+        if(isNaN(animeId))
+        {
+            res.status(400).json({error:'Invalid Anime ID'});
+            return;
+        }
+
+        // Removes animeId to alerts array if present
+        let index = curInfo.alerts.indexOf(animeId)
+        if(index != -1) 
+        {
+            curInfo.alerts.splice(index, 1)
+
+            // Returns new alerts section to db
+            await db.collection('Users').updateOne({_id:_id}, {$set: {alerts:curInfo.alerts}});            
+        }
+
+        // Updates alerts section of anime in Anime, removes anime from DB if no alerts
+        var animeDB = await db.collection('Anime').findOne({animeId:animeId})
+        if(animeDB) 
+        {
+            // Removes userId from anime alerts, if present
+            let index = animeDB.alerts.indexOf(id)
+            if(index != -1)
+            {
+                animeDB.alerts.splice(index, 1)
+
+                // Updates alerts section to db
+                await db.collection('Anime').updateOne({animeId:animeId}, {$set: {alerts:animeDB.alerts}});
+            }
+
+            // Removes anime from DB if alerts empty
+            if(animeDB.alerts.length == 0)
+            {
+                await db.collection('Anime').deleteOne({animeId: animeId})
+            }
+        }
+    }
+    catch (error)
+    {
+        error = 'Server Failure';
+        status = 500;
+    }
+
+    var ret = {error: error}
+    res.status(status).json(ret)
 });
 
 // Fetches all anime currently on user's alerts list
