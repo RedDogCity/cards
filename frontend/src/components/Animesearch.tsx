@@ -1,21 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const AnimeSearch = () => {
-
-    const app_name = '194.195.211.99';
-    function buildPath(route: string): string {
-        if (import.meta.env.NODE_ENV !== 'development') {
-            return 'http://' + app_name + ':5000/' + route;
-        } else {
-            return 'http://localhost:5000/' + route;
-        }
+  const app_name = '194.195.211.99';
+  function buildPath(route: string): string {
+    if (import.meta.env.NODE_ENV !== 'development') {
+      return 'http://' + app_name + ':5000/' + route;
+    } else {
+      return 'http://localhost:5000/' + route;
     }
+  }
 
-  const [query, setQuery] = useState('');
-  const [type, setType] = useState('');
-  const [minScore, setMinScore] = useState('');
-  const [maxScore, setMaxScore] = useState('');
-  const [status, setStatus] = useState('');
   interface Anime {
     animeId: number;
     imageURL: string;
@@ -25,7 +19,17 @@ const AnimeSearch = () => {
     synopsis?: string;
   }
 
+  const userId = JSON.parse(localStorage.getItem("user_data") || '{}').id || '';
+
+
+
+  const [query, setQuery] = useState('');
+  const [type, setType] = useState('');
+  const [minScore, setMinScore] = useState('');
+  const [maxScore, setMaxScore] = useState('');
+  const [status, setStatus] = useState('');
   const [results, setResults] = useState<Anime[]>([]);
+  const [userAlerts, setUserAlerts] = useState<number[]>([]);
   const [error, setError] = useState('');
 
   const handleSearch = async () => {
@@ -40,11 +44,11 @@ const AnimeSearch = () => {
         }
       };
 
-const response = await fetch(buildPath('api/searchAnime'), {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify(body)
-});
+      const response = await fetch(buildPath('api/searchAnime'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
 
       const data = await response.json();
       if (response.ok) {
@@ -55,10 +59,63 @@ const response = await fetch(buildPath('api/searchAnime'), {
         setResults([]);
       }
     } catch (err) {
-      setError('Server error.');
+      setError('Server error!.');
       setResults([]);
     }
   };
+
+  if (!userId) {
+    setError('User not logged in or user ID missing.');
+    return;
+  }
+
+  const fetchUserAlerts = async () => {
+    try {
+      const response = await fetch(buildPath('api/getAnimeAlerts'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: userId })
+      });
+      const data = await response.json();
+      if (response.ok) {
+        const ids = data.anime.map((a: Anime) => a.animeId);
+        setUserAlerts(ids);
+      }
+    } catch (err) {
+      console.error('Failed to fetch user alerts');
+    }
+  };
+
+  const handleAddAlert = async (animeId: number) => {
+    if (userAlerts.includes(animeId)) {
+      setError('Anime already in your alert list.');
+      return;
+    }
+
+    try {
+      const response = await fetch(buildPath('api/addAlert'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: userId, animeId })
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setUserAlerts([...userAlerts, animeId]);
+        setError('');
+      } else {
+        setError(data.error || 'Failed to add alert.');
+      }
+    } catch (err) {
+      setError('Server error while adding alert.');
+    }
+  };
+
+  useEffect(() => {
+    if (userId) fetchUserAlerts();
+  }, [userId]);
+
+
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
@@ -72,7 +129,7 @@ const response = await fetch(buildPath('api/searchAnime'), {
       </div>
       <button onClick={handleSearch} className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Search</button>
 
-      {error && <p className="mt-4 text-red-600">{error}</p>}
+      {error && <p className="mt-4 text-purple-600">{error}</p>}
 
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {results.map((anime) => (
@@ -80,7 +137,12 @@ const response = await fetch(buildPath('api/searchAnime'), {
             <img src={anime.imageURL} alt={anime.title} className="w-full h-64 object-cover mb-2 rounded" />
             <h2 className="text-xl font-semibold mb-1">{anime.title}</h2>
             <p className="text-sm text-gray-600 mb-2">{anime.air_day} | {anime.airing ? 'Airing' : 'Completed'}</p>
-            <p className="text-sm">{anime.synopsis?.substring(0, 150)}...</p>
+            <p className="text-sm mb-2">{anime.synopsis?.substring(0, 150)}...</p>
+            {!userAlerts.includes(anime.animeId) && (
+              <button onClick={() => handleAddAlert(anime.animeId)} className="text-white bg-green-600 hover:bg-green-700 px-3 py-1 rounded">
+                + Add to Alerts
+              </button>
+            )}
           </div>
         ))}
       </div>

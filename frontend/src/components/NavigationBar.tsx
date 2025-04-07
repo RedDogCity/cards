@@ -20,15 +20,15 @@ function NavigationBar() {
         <div>
 
 
-<nav className="fixed top-0 left-0 w-full  mx-auto p-8 text-center 
+            <nav className="fixed top-0 left-0 w-full  mx-auto p-8 text-center 
                     bg-[#a1ffff3b] border-2 border-white/20 
                     backdrop-blur-md font-['Space Grotesk']
                     py-[30px]font-bold flex items-center justify-between px-6 py-6 z-50">
-                <div id="header" className= "justify-right flex items-center">
+                <div id="header" className="justify-right flex items-center">
                     <div id="logo" className="flex items-center p-0 m-0"> {/* Removed padding and margin */}
-                        <img src={Website_Logo} 
-                        alt="Web Logo" 
-                        className="h-20 w-auto m-0" /> {/* Removed margin */}
+                        <img src={Website_Logo}
+                            alt="Web Logo"
+                            className="h-20 w-auto m-0" /> {/* Removed margin */}
                     </div>
 
 
@@ -41,8 +41,15 @@ function NavigationBar() {
                             <Link to="/register">Register</Link>
                         </>
                     )}
+                    {isLoggedIn && (
+                        <>
+                            <Link to="/user-home">UserHome</Link>
+                            <Link to="/alert-list">AlertList</Link>
+                            {logOut}
+                        </>
+                    )}
                 </div>
-                {logOut}
+
             </nav>
         </div>
 
