@@ -198,6 +198,7 @@ app.post('/api/register', async (req, res, next) => {
         password: req.body.password,
         emailAddress: req.body.emailAddress,
         name: req.body.name,
+        isEmailverified: true,
         alerts: []
     };
 
