@@ -151,6 +151,39 @@ app.post('/api/login', async (req, res, next) => {
     res.status(status).json(ret);
 });
 
+app.post('/api/forgotPassword', async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        // Check if the email exists and is verified in the database
+        const user = await db.collection('Users').findOne({ emailAddress: email, isEmailverified: true });
+
+        if (!user) {
+            return res.status(404).json({ error: 'Email not recognized or not verified.' });
+        }
+
+        // Ensure the password field exists
+        if (!user.password) {
+            return res.status(500).json({ error: 'Password is missing in the database.' });
+        }
+
+        // Send the password to the user's email
+        const mailOptions = {
+            from: 'cop4331c@zohomail.com',
+            to: email,
+            subject: 'Your Account Password',
+            text: `Hello ${user.name},\n\nYour account password is: ${user.password}\n\nBest regards,\nAni-Lert`,
+        };
+
+        await transporter.sendMail(mailOptions);
+
+        res.status(200).json({ message: 'Password sent to your email.' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to process your request.' });
+    }
+});
+
 app.post('/api/register', async (req, res, next) => {
     // incoming: login, password, name, emailAddress
     // outgoing: error
