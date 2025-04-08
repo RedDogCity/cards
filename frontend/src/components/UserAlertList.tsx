@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 // the userId value is estracted and made available as a standalone variable.
 const UserAlertList = ({userId}: {userId: string}) => {
