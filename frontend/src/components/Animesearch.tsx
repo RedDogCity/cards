@@ -33,6 +33,7 @@ const AnimeSearch = () => {
   const [error, setError] = useState('');
 
   const handleSearch = async () => {
+    setResults([]); // clear previous results
     try {
       const body = {
         searchParams: {
