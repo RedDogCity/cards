@@ -647,5 +647,80 @@ app.post('/api/getAnimeAlerts', async (req, res, next) => {
     res.status(status).json({anime: anime, error: error});
 });
 
+// Sends out alert emails to every user with updated anime on their list
+app.post('/api/sendAlerts', async (req, res, next) => {
+    // incoming: day
+    // outgoing: error
+
+    const day = req.body.day
+    var error = '';
+    var status = 200;
+
+    try {
+        // Gets list of anime with new episode aired yesterday
+        var alertsArr = await db.collection("Anime").find({airing: true, air_day: day}).toArray()
+
+        // If any anime with new episode
+        if(alertsArr.length > 0) {
+            var userArr = []
+
+            // Puts all userIds and related anime titles into userArr
+            // Format: userArr = [{userId, [anime, ...]}, ...]
+            for(i = 0; i < alertsArr.length; i += 1) {
+                for(j = 0; j < alertsArr[i].alerts.length; j += 1) {
+
+                    // Checks if userId already in userArr
+                    var index = userArr.find(e => e.id === alertsArr[i].alerts[j])
+                    // If not found, create new entry in userArr for userId + anime
+                    if(index == undefined) {
+                        var obj = {
+                            id: alertsArr[i].alerts[j],
+                            anime: [alertsArr[i].title],
+                        }
+                        userArr.push(obj)
+                    }
+                    // If found, append anime title to user obj
+                    else {
+                        userArr[index].anime.push(alertsArr[i].title)
+                    }
+                }
+            }
+
+            // Goes over every user
+            for(i = 0; i < userArr.length; i += 1) {
+                // Fetches user info from DB
+                const _id = ObjectId.createFromHexString(userArr[i].id)
+                const userData = await db.collection("Users").findOne({_id: _id})
+                if(!userData) {
+                    return res.status(500).json({error: 'DB Error'})
+                }
+
+                // Creates single string of all alerted anime titles for user
+                var animeString = ''
+                for(j = 0; j < userArr[i].anime.length; j += 1) {
+                    animeString = animeString + userArr[i].anime[j] + '\n'
+                }
+
+                // Formats email
+                const mailOptions = {
+                    from: 'cop4331c@zohomail.com',
+                    to: userData.emailAddress,
+                    subject: 'Your Alerts for the Day',
+                    text: `Hello ${userData.name},\n\nThe following anime on your list have a new episode!\n\n` + animeString
+                }
+
+                await transporter.sendMail(mailOptions)
+            }
+        }
+    }
+    catch (err) {
+        error = 'Server Failure'
+        status = 500
+    }
+
+    ret = {error:error}
+    res.status(status).json(ret)
+});
+
 // Starts the Express server and listens on port 5000 for incoming request
 app.listen(5000);
