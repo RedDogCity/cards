@@ -106,7 +106,7 @@ function Login() {
             <input
               type="text"
               id="loginName"
-              placeholder="Username"
+              placeholder="Email"
               onChange={handleSetLoginName}
             />
             <br />
