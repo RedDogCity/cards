@@ -6,6 +6,7 @@ import NavigationBar from './components/NavigationBar.tsx';
 import HomePage from './pages/HomePage.tsx';
 import UserHomePage from './pages/UserHomePage.tsx'; // Import the new page
 import AlertList from './pages/AlertList.tsx'; // Import the new component
+import PopularAnimeList from './pages/PopularAnimeList.tsx'; // Import the new component
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/user-home" element={<UserHomePage />} />
               <Route path="/alert-list" element={<AlertList />} />
+              <Route path="/popular-anime" element={<PopularAnimeList />} />
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </BrowserRouter>

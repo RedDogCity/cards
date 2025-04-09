@@ -21,7 +21,7 @@ function NavigationBar() {
 
 
             <nav className="fixed top-0 left-0 w-full  mx-auto p-8 text-center 
-                    bg-[#a1ffff3b] border-2 border-white/20 
+                    bg-[#00ffff3b] border-2 border-white/20 
                     backdrop-blur-md font-['Space Grotesk']
                     py-[30px]font-bold flex items-center justify-between px-6 py-6 z-50">
                 <div id="header" className="justify-right flex items-center">
@@ -33,7 +33,7 @@ function NavigationBar() {
 
 
                 </div>
-                <div id="nav-links" className="flex justify-center space-x-10"> {/* Centered links */}
+                <div id="nav-links" className="flex justify-center space-x-10 "> {/* Centered links */}
                     {!isLoggedIn && (
                         <>
                             <Link to="/">Home</Link>
@@ -45,6 +45,7 @@ function NavigationBar() {
                         <>
                             <Link to="/user-home">UserHome</Link>
                             <Link to="/alert-list">AlertList</Link>
+                            <Link to="/popular-anime">Popular Anime</Link>
                             {logOut}
                         </>
                     )}

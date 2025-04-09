@@ -73,7 +73,7 @@ const UserAlertList = ({ userId }: { userId: string }) => {
       {error && <p className="text-red-600">{error}</p>}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {animeList.map((anime) => (
-          <div key={anime.animeId} className="border rounded p-4 shadow hover:shadow-lg relative">
+          <div key={anime.animeId} className="border rounded p-4  bg-white relative shadow hover:shadow-lg relative">
             <img src={anime.imageURL} alt={anime.title} className="w-full h-64 object-cover mb-2 rounded" />
             <h2 className="text-xl font-semibold mb-1">{anime.title}</h2>
             <p className="text-sm text-gray-600 mb-2">{anime.air_day} | {anime.airing ? 'Airing' : 'Completed'}</p>
@@ -84,7 +84,7 @@ const UserAlertList = ({ userId }: { userId: string }) => {
               className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-full text-sm hover:bg-red-600"
               onClick={() => setRemovalTarget(anime.animeId)}
             >
-              ➖
+              -
             </button>
 
             {/* Are you sure? */}

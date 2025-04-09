@@ -134,7 +134,7 @@ const AnimeSearch = () => {
 
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {results.map((anime) => (
-          <div key={anime.animeId} className="border rounded p-4 shadow hover:shadow-lg">
+          <div key={anime.animeId} className="border rounded p-4 shadow hover:shadow-lg bg-white relative">
             <img src={anime.imageURL} alt={anime.title} className="w-full h-64 object-cover mb-2 rounded" />
             <h2 className="text-xl font-semibold mb-1">{anime.title}</h2>
             <p className="text-sm text-gray-600 mb-2">{anime.air_day} | {anime.airing ? 'Airing' : 'Completed'}</p>
