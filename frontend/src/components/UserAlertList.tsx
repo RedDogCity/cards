@@ -68,10 +68,10 @@ const UserAlertList = ({ userId }: { userId: string }) => {
   };
 
   return (
-    <div className="p-4 max-w-4xl mx-auto">
+    <div className="p-4 max-w-6xl mx-auto">
       <h1 className="text-2xl font-bold mb-4  text-white">Your Anime Alerts</h1>
       {error && <p className="text-red-600">{error}</p>}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {animeList.map((anime) => (
           <div key={anime.animeId} className="border rounded p-4  bg-white relative shadow hover:shadow-lg relative">
             <img src={anime.imageURL} alt={anime.title} className="w-full h-64 object-cover mb-2 rounded" />
@@ -84,7 +84,7 @@ const UserAlertList = ({ userId }: { userId: string }) => {
               className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-full text-sm hover:bg-red-600"
               onClick={() => setRemovalTarget(anime.animeId)}
             >
-              -
+              - Remove
             </button>
 
             {/* Are you sure? */}

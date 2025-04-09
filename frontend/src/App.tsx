@@ -14,7 +14,7 @@ function App() {
       className="m-0 min-w-[640px] min-h-[120vh]" // Increased size
     >
       <div
-        className="pt-[150px] flex items-center justify-center min-h-[120vh] 
+        className="pt-[200px] flex items-center justify-center min-h-[120vh] 
                    bg-[url('/src/assets/images/background.jpg')] 
                    bg-no-repeat bg-center bg-fixed bg-cover"
       >

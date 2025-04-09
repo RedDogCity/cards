@@ -34,7 +34,7 @@ html.dark {
 
 button {
   @apply relative my-[15px] flex w-full px-[20px] pr-[50px] py-[13px] 
-    border-[2px] border-[rgba(255,146,146,0.61)] rounded-[8px] 
+    border-[2px] border-[rgba(255,255,255,0.61)] rounded-[8px] 
     text-white text-[16px] font-medium outline-none 
     backdrop-blur-sm bg-[#df161667] 
     hover:bg-[rgba(180,45,45,0.404)] transition;
@@ -51,7 +51,7 @@ button {
 
 
 .box{
-  @apply flex justify-center items-center h-[400px] w-[300px] text-[40pt] bg-[#e22e3d3b] border-2 border-white/20 
+  @apply flex justify-center items-center h-[400px] w-[300px] text-[40pt] bg-[#ffffff] border-2 border-white/20 
   backdrop-blur-md 
 }
 

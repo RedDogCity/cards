@@ -119,8 +119,10 @@ const AnimeSearch = () => {
 
 
   return (
-    <div className="p-4 max-w-4xl mx-auto">
+    <div className="p-4 max-w-6xl mx-auto">
       <h1 className="text-2xl font-bold mb-4  text-white ">Search Anime</h1>
+      
+      
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
         <input type="text" placeholder="Search..." value={query} onChange={(e) => setQuery(e.target.value)} className="p-2 border rounded bg-white " />
         <input type="text" placeholder="Type (TV, Movie, etc.)" value={type} onChange={(e) => setType(e.target.value)} className="p-2 border rounded bg-white" />
@@ -132,7 +134,7 @@ const AnimeSearch = () => {
 
       {error && <p className="mt-4 text-purple-600">{error}</p>}
 
-      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {results.map((anime) => (
           <div key={anime.animeId} className="border rounded p-4 shadow hover:shadow-lg bg-white relative">
             <img src={anime.imageURL} alt={anime.title} className="w-full h-64 object-cover mb-2 rounded" />
