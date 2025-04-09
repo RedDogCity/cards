@@ -722,5 +722,52 @@ app.post('/api/sendAlerts', async (req, res, next) => {
     res.status(status).json(ret)
 });
 
+// Returns current top anime
+app.post('/api/getTopAnime', async (req, res, next) => {
+    // incoming: nothing
+    // outgoing: pagination: {...}, data: [{...}, ...], error
+
+    // Default values
+    var animeData = [];
+    var error = '';
+    var status = 200;
+
+    // Base search url
+    const jikan_url = 'https://api.jikan.moe/v4/top/anime';
+    
+    // HTTP request
+    try {
+        const response = await fetch(jikan_url);
+            
+        if(!response.ok)
+        {
+            status = response.status;
+            error = 'Invalid Query Parameters';
+        }
+        else
+        {
+            var out = await response.json();
+            out.data.forEach(anime => {
+                animeData.push({
+                    animeId: anime.mal_id,
+                    title: anime.title,
+                    airing: anime.airing,
+                    air_day: anime.broadcast.day,
+                    synopsis: anime.synopsis,
+                    imageURL: anime.images.jpg.image_url
+                });
+            });
+        }
+    }
+    catch (err) {
+        error = 'Server Failure';
+        status = 500;
+    }
+
+    // Returns search results
+    var ret = {data:animeData, error:error};
+    res.status(status).json(ret);
+});
+
 // Starts the Express server and listens on port 5000 for incoming request
 app.listen(5000);
