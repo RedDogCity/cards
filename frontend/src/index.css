@@ -60,6 +60,8 @@ button {
 
 
 a {
-@apply font-black text-[#267a73] 
+@apply font-black  text-white
 hover:text-[#0a554f] no-underline
 }
+
+

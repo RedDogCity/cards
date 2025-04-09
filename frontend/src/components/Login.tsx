@@ -96,7 +96,7 @@ function Login() {
     <div id="loginDiv">
       {!isForgotPassword ? (
         <>
-          <span id="inner-title" className="text-[1.2em] font-['Space Grotesk'] leading-[2.1]">
+          <span id="inner-title" className="text-[1.2em] font-['Space Grotesk'] leading-[2.1] text-2xl font-bold mb-4  text-white ">
             PLEASE LOG IN
           </span>
           <br />

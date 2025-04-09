@@ -33,7 +33,7 @@ function NavigationBar() {
 
 
                 </div>
-                <div id="nav-links" className="flex justify-center space-x-10 "> {/* Centered links */}
+                <div id="nav-links" className="flex justify-center space-x-10  text-white"> {/* Centered links */}
                     {!isLoggedIn && (
                         <>
                             <Link to="/">Home</Link>

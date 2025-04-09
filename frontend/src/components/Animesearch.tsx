@@ -120,13 +120,13 @@ const AnimeSearch = () => {
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Search Anime</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <input type="text" placeholder="Search..." value={query} onChange={(e) => setQuery(e.target.value)} className="p-2 border rounded" />
-        <input type="text" placeholder="Type (TV, Movie, etc.)" value={type} onChange={(e) => setType(e.target.value)} className="p-2 border rounded" />
-        <input type="number" placeholder="Min Score" value={minScore} onChange={(e) => setMinScore(e.target.value)} className="p-2 border rounded" />
-        <input type="number" placeholder="Max Score" value={maxScore} onChange={(e) => setMaxScore(e.target.value)} className="p-2 border rounded" />
-        <input type="text" placeholder="Status (airing, complete)" value={status} onChange={(e) => setStatus(e.target.value)} className="p-2 border rounded" />
+      <h1 className="text-2xl font-bold mb-4  text-white ">Search Anime</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
+        <input type="text" placeholder="Search..." value={query} onChange={(e) => setQuery(e.target.value)} className="p-2 border rounded bg-white " />
+        <input type="text" placeholder="Type (TV, Movie, etc.)" value={type} onChange={(e) => setType(e.target.value)} className="p-2 border rounded bg-white" />
+        <input type="number" placeholder="Min Score" value={minScore} onChange={(e) => setMinScore(e.target.value)} className="p-2 border rounded bg-white" />
+        <input type="number" placeholder="Max Score" value={maxScore} onChange={(e) => setMaxScore(e.target.value)} className="p-2 border rounded bg-white" />
+        <input type="text" placeholder="Status (airing, complete)" value={status} onChange={(e) => setStatus(e.target.value)} className="p-2 border rounded bg-white" />
       </div>
       <button onClick={handleSearch} className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Search</button>
 
