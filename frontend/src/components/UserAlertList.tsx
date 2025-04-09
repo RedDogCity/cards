@@ -67,9 +67,16 @@ const UserAlertList = ({ userId }: { userId: string }) => {
     }
   };
 
+  let name = 'Guest';
+    if (localStorage.getItem('user_data') != null) {
+        let _ud: any = localStorage.getItem('user_data');
+        let ud = JSON.parse(_ud);
+        name = ud.name;
+    }
+
   return (
     <div className="p-4 max-w-6xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4  text-white">Your Anime Alerts</h1>
+      <h1 className="text-2xl font-bold mb-4  text-white">{name}: Anime Alerts</h1>
       {error && <p className="text-red-600">{error}</p>}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {animeList.map((anime) => (

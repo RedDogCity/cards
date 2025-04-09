@@ -126,7 +126,7 @@ function Register() {
 
     return (
         <div id="registerDiv">
-            <span id="inner-title" className = "text-2xl font-bold mb-4  text-white">PLEASE REGISTER</span><br />
+            <span id="inner-title" className = "text-2xl font-bold mb-4  text-white text-center">PLEASE REGISTER</span><br />
             <span id="registerResult">{message}</span><br />
             <div className="input-box">
                 <input type="text" id="registerName" placeholder="Name" onChange={e => setRegisterName(e.target.value)} /><br />

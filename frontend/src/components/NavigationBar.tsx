@@ -26,7 +26,7 @@ function NavigationBar() {
                     <div id="logo" className="flex items-center p-0 m-0"> {/* Removed padding and margin */}
                         <img src={Website_Logo}
                             alt="Web Logo"
-                            className="h-30 w-auto m-0" /> {/* Removed margin */}
+                            className="h-20 w-auto m-0" /> {/* Removed margin */}
                     </div>
 
 
